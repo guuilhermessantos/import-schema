@@ -360,11 +360,13 @@ main() {
     --file=- \
     "$local_dump_file" | \
     grep -v "^SET transaction_timeout" | \
+    sed -E 's/(^|\t)-?Infinity(\t|$)/\1\\N\2/g' | \
     PGPASSWORD="$LOCAL_PGPASSWORD" psql \
       --host="$LOCAL_PGHOST" \
       --port="$LOCAL_PGPORT" \
       --username="$LOCAL_PGUSER" \
       --dbname="$TEMP_DATABASE" \
+      --set=ON_ERROR_STOP=1 \
       --quiet
   log_info "Restore concluido no banco '$TEMP_DATABASE'."
 
